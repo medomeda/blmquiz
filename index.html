@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Quiz – Êtes-vous la maîtresse de votre vie ?</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap");
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --rose: #c9667a;
+        --rose-l: #edd5da;
+        --rose-d: #9e4558;
+        --gold: #c9a96e;
+        --gold-l: #f0e6d3;
+        --dark: #1c1c2e;
+        --grey: #6b6b7b;
+        --light: #faf8f5;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--light);
+        color: var(--dark);
+        min-height: 100vh;
+      }
+      .hero {
+        background: linear-gradient(
+          135deg,
+          #1c1c2e 0%,
+          #2e1a2e 50%,
+          #3d1f35 100%
+        );
+        color: #fff;
+        text-align: center;
+        padding: 64px 24px 80px
+      }
+      .hero-tag {
+        display: inline-block;
+        background: rgba(201, 166, 110, 0.18);
+        border: 1px solid rgba(201, 166, 110, 0.4);
+        color: #c9a96e;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 6px 18px;
+        border-radius: 100px;
+        margin-bottom: 28px;
+      }
+      .hero h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        line-height: 1.15;
+        max-width: 700px;
+        margin: 0 auto 20px;
+      }
+      .hero h1 em {
+        color: var(--rose);
+        font-style: italic;
+      }
+      .hero p {
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.72);
+        max-width: 520px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+      }
+      .hero-meta {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        flex-wrap: wrap;
+      }
+      .hero-meta span {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.55);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .hero-meta span::before {
+        content: "✦";
+        color: #c9a96e;
+        font-size: 0.6rem;
+      }
+      .progress-wrap {
+        background: #fff;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 16px 24px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: none;
+      }
+      .progress-wrap.visible {
+        display: block;
+      }
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: var(--grey);
+        margin-bottom: 8px;
+        max-width: 680px;
+        margin-inline: auto;
+      }
+      .progress-bar {
+        height: 5px;
+        background: #e8e5f0;
+        border-radius: 100px;
+        max-width: 680px;
+        margin-inline: auto;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--rose), #c9a96e);
+        border-radius: 100px;
+        transition: width 0.4s ease;
+      }
+      .quiz-wrap {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 48px 24px 80px;
+      }
+      .screen {
+        display: none;
+      }
+      .screen.active {
+        display: block;
+        animation: fadeUp 0.4s ease both;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 40px rgba(28, 28, 46, 0.1);
+        padding: 48px;
+        text-align: center;
+      }
+      .card h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.7rem;
+        margin-bottom: 16px;
+      }
+      .card p {
+        color: var(--grey);
+        line-height: 1.75;
+        margin-bottom: 12px;
+        font-size: 0.97rem;
+      }
+      .promise {
+        background: #f0e6d3;
+        border-left: 3px solid #c9a96e;
+        padding: 14px 18px;
+        border-radius: 0 10px 10px 0;
+        text-align: left;
+        font-size: 0.88rem;
+        color: #7a5c2e;
+        margin: 24px 0;
+        line-height: 1.6;
+      }
+      .spheres-preview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 20px 0 32px;
+        text-align: left;
+      }
+      .sphere-item {
+        background: var(--light);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 0.82rem;
+        color: var(--grey);
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .email-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 380px;
+        margin: 0 auto;
+      }
+      .email-form input {
+        border: 1.5px solid #e0dcf0;
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 0.97rem;
+        font-family: "Inter", sans-serif;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .email-form input:focus {
+        border-color: var(--rose);
+      }
+      .privacy-note {
+        font-size: 0.75rem;
+        color: #aaa;
+        margin-top: 6px;
+      }
+      .question-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 40px rgba(28, 28, 46, 0.1);
+        overflow: hidden;
+      }
+      .question-header {
+        background: linear-gradient(135deg, #1c1c2e 0%, #2e1a2e 100%);
+        padding: 28px 32px 24px;
+        color: #fff;
+      }
+      .q-sphere {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #c9a96e;
+        margin-bottom: 12px;
+      }
+      .q-number {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.45);
+        margin-bottom: 8px;
+      }
+      .q-text {
+        font-family: "Playfair Display", serif;
+        font-size: 1.25rem;
+        line-height: 1.4;
+        font-style: italic;
+      }
+      .options-wrap {
+        padding: 28px 32px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .option {
+        border: 1.5px solid #e8e5f0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        transition: all 0.18s ease;
+        font-size: 0.93rem;
+        line-height: 1.5;
+        color: var(--dark);
+        background: #fff;
+        text-align: left;
+        width: 100%;
+        font-family: "Inter", sans-serif;
+      }
+      .option:hover {
+        border-color: var(--rose);
+        background: #fdf5f7;
+        transform: translateX(3px);
+      }
+      .option.selected {
+        border-color: var(--rose);
+        background: #fdf5f7;
+      }
+      .option.selected .opt-letter {
+        background: var(--rose);
+        color: #fff;
+        border-color: var(--rose);
+      }
+      .opt-letter {
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        border: 1.5px solid #d5d0e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--grey);
+        transition: all 0.18s;
+        margin-top: 1px;
+      }
+      .nav-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 32px 28px;
+        gap: 12px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 32px;
+        border-radius: 100px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: "Inter", sans-serif;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--rose) 0%, var(--rose-d) 100%);
+        color: #fff;
+        box-shadow: 0 4px 20px rgba(201, 102, 122, 0.35);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--grey);
+        border: 1.5px solid #e0dcf0;
+      }
+      .btn-ghost:hover {
+        background: var(--light);
+        color: var(--dark);
+      }
+      .btn-gold {
+        background: linear-gradient(135deg, #c9a96e 0%, #b8864a 100%);
+        color: #fff;
+        box-shadow: 0 4px 20px rgba(201, 166, 110, 0.35);
+        padding: 16px 40px;
+        font-size: 1.02rem;
+      }
+      .btn-gold:hover {
+        transform: translateY(-2px);
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .result-hero {
+        background: linear-gradient(135deg, #1c1c2e 0%, #2e1a2e 100%);
+        padding: 48px 40px 40px;
+        text-align: center;
+        color: #fff;
+      }
+      .profile-emoji {
+        font-size: 3.2rem;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .profile-tag {
+        display: inline-block;
+        border: 1px solid rgba(201, 166, 110, 0.5);
+        color: #c9a96e;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 5px 16px;
+        border-radius: 100px;
+        margin-bottom: 16px;
+      }
+      .profile-name {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        margin-bottom: 10px;
+        font-style: italic;
+      }
+      .profile-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.97rem;
+        line-height: 1.65;
+        max-width: 450px;
+        margin: 0 auto;
+      }
+      .result-body {
+        padding: 40px;
+      }
+      .score-display {
+        background: linear-gradient(135deg, #f0e6d3, #faf3e8);
+        border-radius: 14px;
+        padding: 24px;
+        text-align: center;
+        margin-bottom: 32px;
+        border: 1px solid rgba(201, 166, 110, 0.3);
+      }
+      .score-number {
+        font-family: "Playfair Display", serif;
+        font-size: 3.5rem;
+        color: #c9a96e;
+        line-height: 1;
+      }
+      .score-label {
+        font-size: 0.8rem;
+        color: var(--grey);
+        margin-top: 4px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .result-section {
+        margin-bottom: 32px;
+      }
+      .result-section h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.15rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .result-section h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #e8e5f0;
+      }
+      .signs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .sign-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: 0.9rem;
+        color: var(--grey);
+        line-height: 1.55;
+      }
+      .sign-item::before {
+        content: "◆";
+        color: var(--rose);
+        font-size: 0.55rem;
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .insight-box {
+        background: linear-gradient(135deg, #fdf5f7, #fef9f0);
+        border-left: 3px solid var(--rose);
+        border-radius: 0 14px 14px 0;
+        padding: 20px 24px;
+        font-size: 0.92rem;
+        line-height: 1.7;
+        color: #4a3040;
+        font-style: italic;
+      }
+      .next-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 32px;
+      }
+      .step-item {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: var(--light);
+        border-radius: 12px;
+        padding: 14px 18px;
+      }
+      .step-num {
+        width: 26px;
+        height: 26px;
+        flex-shrink: 0;
+        background: var(--rose);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .step-text {
+        font-size: 0.88rem;
+        color: var(--dark);
+        line-height: 1.55;
+      }
+      .cta-block {
+        background: linear-gradient(135deg, #1c1c2e, #2e1a2e);
+        border-radius: 16px;
+        padding: 36px;
+        text-align: center;
+        color: #fff;
+      }
+      .cta-block h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+        font-style: italic;
+      }
+      .cta-block p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.92rem;
+        line-height: 1.65;
+        margin-bottom: 24px;
+      }
+      .cta-note {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.35);
+        margin-top: 14px;
+      }
+      .sphere-breakdown {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 32px;
+      }
+      .sphere-card {
+        background: var(--light);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+      }
+      .s-label {
+        font-size: 0.72rem;
+        color: var(--grey);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 8px;
+      }
+      .s-bar-wrap {
+        background: #e8e5f0;
+        border-radius: 100px;
+        height: 6px;
+        margin-bottom: 8px;
+        overflow: hidden;
+      }
+      .s-bar {
+        height: 100%;
+        border-radius: 100px;
+        background: linear-gradient(90deg, var(--rose), #c9a96e);
+      }
+      .s-score {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--dark);
+      }
+      @media (max-width: 600px) {
+        .card,
+        .result-body {
+          padding: 28px 22px;
+        }
+        .question-header,
+        .options-wrap,
+        .nav-row,
+        .result-hero {
+          padding-left: 22px;
+          padding-right: 22px;
+        }
+        .spheres-preview,
+        .sphere-breakdown {
+          grid-template-columns: 1fr;
+        }
+        .cta-block {
+          padding: 28px 20px;
+        }
+        .logo{max-width:140px!important}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero" id="hero">
+     
+      <div class="hero-tag">Auto-diagnostic révélateur</div>
+      <h1>
+        Êtes-vous la <em>maîtresse</em><br />ou la passagère de votre vie ?
+      </h1>
+      <p>
+        En 3 minutes, découvrez où vous en êtes vraiment — et ce qui vous coûte
+        le plus cher sans que vous le sachiez.
+      </p>
+      <div class="hero-meta">
+        <span>12 questions</span><span>4 profils révélateurs</span
+        ><span>Analyse personnalisée</span>
+      </div>
+    </div>
+    
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-info">
+        <span id="progressLabel">Question 1 / 12</span
+        ><span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+   
+    <div class="quiz-wrap">
+      <div class="screen active" id="screen-start">
+        <div class="card">
+          <div style="font-size: 2rem; margin-bottom: 16px">🌸</div>
+          <h2>Prenez 3 minutes pour vous</h2>
+          <p>
+            Ce quiz est conçu pour les femmes qui ressentent que leur vie ne
+            leur ressemble plus vraiment — sans pouvoir mettre le doigt dessus.
+          </p>
+          <div class="promise">
+            ✦ À la fin, vous aurez une vision claire de là où vous en êtes, un
+            profil qui vous ressemble, et des pistes concrètes pour reprendre
+            les rênes.
+          </div>
+          <div class="spheres-preview">
+            <div class="sphere-item"><span>⚡</span>Énergie & quotidien</div>
+            <div class="sphere-item"><span>🌸</span>Désirs & identité</div>
+            <div class="sphere-item"><span>✨</span>Réussite & sens</div>
+            <div class="sphere-item"><span>🧭</span>Présence & choix</div>
+          </div>
+          <button class="btn btn-primary" onclick="startQuiz()">
+            Commencer le test →
+          </button>
+        </div>
+      </div>
+      <div class="screen" id="screen-quiz">
+        <div class="question-card">
+          <div class="question-header">
+            <div class="q-sphere" id="qSphere"></div>
+            <div class="q-number" id="qNumber"></div>
+            <div class="q-text" id="qText"></div>
+          </div>
+          <div class="options-wrap" id="optionsWrap"></div>
+          <div class="nav-row">
+            <button class="btn btn-ghost" id="btnPrev" onclick="prevQ()">
+              ← Précédent
+            </button>
+            <button
+              class="btn btn-primary"
+              id="btnNext"
+              onclick="nextQ()"
+              disabled
+            >
+              Suivant →
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="screen" id="screen-email">
+        <div class="card">
+          <div style="font-size: 2.5rem; margin-bottom: 16px">🔓</div>
+          <h2>Votre analyse est prête !</h2>
+          <p>
+            Entrez votre prénom et votre email pour découvrir votre profil,
+            votre score et vos recommandations personnalisées.
+          </p>
+          <div class="email-form">
+            <input type="text" id="inputPrenom" placeholder="Votre prénom" />
+            <input
+              type="email"
+              id="inputEmail"
+              placeholder="Votre adresse email"
+            />
+            <button
+              class="btn btn-primary"
+              onclick="showResult()"
+              style="width: 100%"
+            >
+              Découvrir mon profil →
+            </button>
+            <p class="privacy-note">
+              🔒 Vos données restent confidentielles. Aucun spam, promis.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="screen" id="screen-result">
+        <div class="question-card">
+          <div class="result-hero">
+            <span class="profile-emoji" id="rEmoji"></span>
+            <div class="profile-tag">Votre profil</div>
+            <div class="profile-name" id="rName"></div>
+            <div class="profile-tagline" id="rTagline"></div>
+          </div>
+          <div class="result-body">
+            <div class="score-display">
+              <div class="score-number" id="rScore"></div>
+              <div class="score-label">points sur 48</div>
+            </div>
+            <div class="result-section">
+              <h3>🔍 Analyse par sphère</h3>
+              <div class="sphere-breakdown" id="sphereBreakdown"></div>
+            </div>
+            <div class="result-section">
+              <h3>✦ Signes qui vous parlent</h3>
+              <div class="signs-list" id="rSigns"></div>
+            </div>
+            <div class="result-section">
+              <h3>💬 Ce que ça révèle</h3>
+              <div class="insight-box" id="rInsight"></div>
+            </div>
+            <div class="result-section">
+              <h3>🌿 Vos 3 premiers pas</h3>
+              <div id="rSteps"></div>
+            </div>
+            <div class="cta-block">
+              <h3 id="rCtaTitle"></h3>
+              <p id="rCtaText"></p>
+              <a href="#" class="btn btn-gold" style="pointer-events: none;" id="rCtaBtn"></a>
+              <p class="cta-note">
+                Places limitées · Sans engagement · Appel découverte offert
+              </p>
+            </div>
+            <div style="text-align: center; margin-top: 28px">
+              <button class="btn btn-ghost" onclick="restart()">
+                ↩ Refaire le test
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const WEBHOOK_URL = "https://automation.t-link.shop/webhook-test/blmquiz"; // ← remplacez par votre URL
+
+      const Q = [
+        {
+          s: "⚡ Énergie & quotidien",
+          si: 0,
+          t: "Quand vous pensez à votre semaine type, vous ressentez…",
+          o: [
+            {
+              l: "Une énergie globalement stable, avec des hauts et des bas normaux",
+              p: 1,
+            },
+            {
+              l: "De la fatigue, mais vous gérez — vous avez l'habitude",
+              p: 2,
+            },
+            {
+              l: "Un épuisement chronique que vous camouflez sous la productivité",
+              p: 3,
+            },
+            {
+              l: "Un vide, comme si vous fonctionniez en mode économie d'énergie permanente",
+              p: 4,
+            },
+          ],
+        },
+        {
+          s: "⚡ Énergie & quotidien",
+          si: 0,
+          t: "Le matin au réveil, votre première pensée est…",
+          o: [
+            { l: "L'impatience pour quelque chose de la journée", p: 1 },
+            {
+              l: "« Encore une journée » — neutre, sans vraie motivation",
+              p: 2,
+            },
+            { l: "La liste mentale de tout ce que vous devez faire", p: 3 },
+            { l: "Rien. Vous vous levez parce qu'il le faut", p: 4 },
+          ],
+        },
+        {
+          s: "⚡ Énergie & quotidien",
+          si: 0,
+          t: "Votre « temps pour vous » dans la semaine, c'est…",
+          o: [
+            { l: "Un rendez-vous que vous posez et que vous honorez", p: 1 },
+            {
+              l: "Quelque chose que vous prenez quand « tout est fait »",
+              p: 2,
+            },
+            { l: "Une culpabilité quand vous essayez de le prendre", p: 3 },
+            {
+              l: "Un concept théorique qui ne vous concerne pas vraiment",
+              p: 4,
+            },
+          ],
+        },
+        {
+          s: "🌸 Désirs & identité",
+          si: 1,
+          t: "Si quelqu'un vous demandait ce que vous désirez vraiment dans la vie, vous répondriez…",
+          o: [
+            {
+              l: "Sans hésiter — vous savez exactement ce qui vous fait vibrer",
+              p: 1,
+            },
+            { l: "Après réflexion, avec quelques idées claires", p: 2 },
+            { l: "Avec vague et hésitation — « je ne sais plus trop… »", p: 3 },
+            {
+              l: "Vous seriez sincèrement perdue. La question vous déstabilise",
+              p: 4,
+            },
+          ],
+        },
+        {
+          s: "🌸 Désirs & identité",
+          si: 1,
+          t: "La dernière fois que vous avez fait quelque chose juste pour le plaisir — sans objectif, sans utilité — c'était…",
+          o: [
+            { l: "Cette semaine", p: 1 },
+            { l: "Il y a quelques semaines", p: 2 },
+            {
+              l: "Plusieurs mois, et vous avez du mal à vous souvenir quoi",
+              p: 3,
+            },
+            { l: "Vous n'avez pas de réponse. Ça fait trop longtemps", p: 4 },
+          ],
+        },
+        {
+          s: "🌸 Désirs & identité",
+          si: 1,
+          t: "Quand vous vous regardez dans votre « miroir intérieur », vous voyez…",
+          o: [
+            {
+              l: "Une femme qui se connaît, avec ses forces et ses zones d'ombre",
+              p: 1,
+            },
+            {
+              l: "Quelqu'un de bien, mais un peu flou — pas toujours reconnaissable",
+              p: 2,
+            },
+            {
+              l: "Une version de vous que vous ne reconnaissez pas totalement",
+              p: 3,
+            },
+            {
+              l: "Une inconnue. Vous avez perdu le fil de qui vous êtes",
+              p: 4,
+            },
+          ],
+        },
+        {
+          s: "✨ Réussite & sens",
+          si: 2,
+          t: "Votre réussite professionnelle ou sociale, elle vous…",
+          o: [
+            { l: "Rend fière ET nourrit quelque chose en vous", p: 1 },
+            {
+              l: "Rend fière, mais reste en surface — quelque chose manque",
+              p: 2,
+            },
+            {
+              l: "Pèse autant qu'elle vous valorise — vous vous demandez pourquoi vous faites tout ça",
+              p: 3,
+            },
+            { l: "Ne vous représente plus du tout — c'est une façade", p: 4 },
+          ],
+        },
+        {
+          s: "✨ Réussite & sens",
+          si: 2,
+          t: "Quand vous imaginez votre vie dans 5 ans, vous ressentez…",
+          o: [
+            { l: "De l'enthousiasme et des projets concrets", p: 1 },
+            { l: "Une espérance vague mais réelle", p: 2 },
+            {
+              l: "Un mélange d'anxiété et de doute — « et si rien ne changeait ? »",
+              p: 3,
+            },
+            { l: "Rien. Vous n'arrivez plus à vous projeter", p: 4 },
+          ],
+        },
+        {
+          s: "✨ Réussite & sens",
+          si: 2,
+          t: "Les sacrifices que vous faites au quotidien vous semblent…",
+          o: [
+            { l: "Des choix conscients qui ont du sens", p: 1 },
+            { l: "Nécessaires, même si parfois lourds", p: 2 },
+            { l: "De plus en plus difficiles à justifier", p: 3 },
+            {
+              l: "Une accumulation de renoncements dont vous avez oublié les raisons",
+              p: 4,
+            },
+          ],
+        },
+        {
+          s: "🧭 Présence & choix",
+          si: 3,
+          t: "Vos décisions importantes, vous les prenez…",
+          o: [
+            { l: "En accord avec ce que vous voulez vraiment", p: 1 },
+            {
+              l: "En pesant les options, parfois influencée par les attentes extérieures",
+              p: 2,
+            },
+            { l: "Souvent en fonction de ce qu'on attend de vous", p: 3 },
+            {
+              l: "Rarement — vous laissez les événements ou les autres décider à votre place",
+              p: 4,
+            },
+          ],
+        },
+        {
+          s: "🧭 Présence & choix",
+          si: 3,
+          t: "Dans votre entourage, vous avez l'impression d'être…",
+          o: [
+            { l: "Pleinement vous-même — vue et entendue", p: 1 },
+            {
+              l: "Appréciée, mais rarement pour ce que vous êtes vraiment",
+              p: 2,
+            },
+            {
+              l: "Celle qu'on appelle pour aider, rarement pour prendre soin d'elle",
+              p: 3,
+            },
+            { l: "Présente physiquement, mais absente intérieurement", p: 4 },
+          ],
+        },
+        {
+          s: "🧭 Présence & choix",
+          si: 3,
+          t: "Si vous pouviez changer une chose dans votre vie dès maintenant, vous choisiriez…",
+          o: [
+            { l: "Un ajustement précis et ciblé", p: 1 },
+            {
+              l: "Reprendre un espace qui vous appartient — du temps, un projet, une relation",
+              p: 2,
+            },
+            {
+              l: "Retrouver l'énergie ou la motivation que vous avez perdue",
+              p: 3,
+            },
+            {
+              l: "Recommencer — vous ne savez même plus par où commencer",
+              p: 4,
+            },
+          ],
+        },
+      ];
+      
+      const P = {
+        lucide: {
+          e: "✨",
+          n: "La Lucide en transition",
+          tg: "Vous avez les bases. Quelque chose en vous sait qu'il est temps d'aller plus loin.",
+          sg: [
+            "Vous avez conscience de vos forces — mais vous ne les exploitez pas pleinement",
+            "Certains domaines fonctionnent bien, d'autres tirent en arrière",
+            "Vous ressentez un écart entre ce que vous vivez et ce que vous pourriez vivre",
+            "Vous avez envie d'évoluer, mais vous manquez d'un cadre clair",
+          ],
+          ins: "Vous n'êtes pas perdue — vous êtes en transition. C'est la phase la plus délicate : tout va « bien », mais quelque chose vous appelle ailleurs. Cette lucidité est votre plus grande force. Elle vous permettra d'aller vite, si vous vous donnez les bons leviers.",
+          st: [
+            {
+              t: "Clarifiez votre vision",
+              c: "Prenez <strong>20 minutes</strong> pour écrire : « Dans 1 an, qu'est-ce qui aurait changé dans ma vie idéale ? »",
+            },
+            {
+              t: "Identifiez votre frein",
+              c: "Qu'est-ce qui vous retient vraiment ? <strong>La peur, le temps, le regard des autres ?</strong> Nommez-le — c'est déjà le désamorcer.",
+            },
+            {
+              t: "Créez un premier élan",
+              c: "Choisissez <strong>une action concrète et minuscule</strong> que vous pouvez faire aujourd'hui dans la direction de ce que vous voulez.",
+            },
+          ],
+          ct: "Vous êtes prête à accélérer",
+          cp: "Vous avez la lucidité. Il vous manque la structure et l'élan pour transformer cette prise de conscience en vraie transformation. C'est exactement ce que l'on fait ensemble.",
+          cb: "Réservez votre appel découverte →",
+        },
+        survivante: {
+          e: "⚡",
+          n: "La Survivante",
+          tg: "Vous fonctionnez. Vous gérez. Mais survivre n'est pas vivre.",
+          sg: [
+            "Votre quotidien tourne à plein régime — et vous aussi, jusqu'à l'épuisement",
+            "Tout est urgent, rien n'est vraiment important",
+            "Vous portez tout le monde… sauf vous-même",
+            "Vous avez l'impression de courir sans jamais arriver nulle part",
+          ],
+          ins: "Vous êtes en mode « gestion de crise » permanente. Vous avez développé une capacité impressionnante à tenir — mais ce n'est pas soutenable, et quelque part vous le savez. La première chose à changer n'est pas de travailler plus. C'est de récupérer de l'espace — pour vous, pour penser, pour respirer.",
+          st: [
+            {
+              t: "Posez une limite aujourd'hui",
+              c: "Refusez <strong>une chose</strong> que vous auriez normalement acceptée par habitude ou culpabilité. Une seule. C'est un acte de reconquête.",
+            },
+            {
+              t: "Identifiez vos vampires d'énergie",
+              c: "Listez les 3 choses qui vous coûtent le plus. Qu'est-ce que vous pourriez <strong>déléguer, réduire ou supprimer</strong> ?",
+            },
+            {
+              t: "Votre rendez-vous avec vous",
+              c: "Bloquez <strong>30 minutes</strong> dans votre agenda cette semaine. Juste pour vous. Sans justification. Prioritaire.",
+            },
+          ],
+          ct: "Il est temps de reprendre votre espace",
+          cp: "Vous méritez plus que de tenir. Mon accompagnement est fait pour les femmes qui portent beaucoup et qui sont prêtes à poser certains poids pour avancer vraiment.",
+          cb: "Commençons ensemble →",
+        },
+        performeuse: {
+          e: "🎭",
+          n: "La Performeuse désenchantée",
+          tg: "Vous avez réussi. Et pourtant — quelque chose sonne creux.",
+          sg: [
+            "Vous avez une belle vie « sur le papier » — mais intérieurement, quelque chose manque",
+            "Vous continuez à performer, mais le cœur n'y est plus vraiment",
+            "Vous avez sacrifié des choses importantes pour une réussite qui ne vous nourrit plus",
+            "Un sentiment de « c'est tout ? » s'installe progressivement",
+          ],
+          ins: "Ce vide que vous ressentez n'est pas un signe de faiblesse — c'est un signal. Votre vie vous demande d'être réalignée, pas reconstruite. Vous n'avez pas besoin de tout abandonner. Vous avez besoin de redéfinir ce que « réussir » signifie pour vous.",
+          st: [
+            {
+              t: "Distinguez vos désirs des attentes",
+              c: "Pour chaque accomplissement, demandez-vous : <strong>« Est-ce que je l'ai fait pour moi ou pour prouver quelque chose ? »</strong>",
+            },
+            {
+              t: "Reconnectez-vous à ce qui compte",
+              c: "Pensez à <strong>un moment où vous vous êtes sentie pleinement vivante</strong>. Qu'est-ce qui était présent ? Comment le réintégrer ?",
+            },
+            {
+              t: "Faites de la place au sens",
+              c: "Choisissez <strong>un projet ou une activité</strong> qui vous nourrit vraiment — pas qui vous valorise. Donnez-lui plus de place, dès maintenant.",
+            },
+          ],
+          ct: "Réalignez réussite et sens",
+          cp: "Vous avez bâti quelque chose. Maintenant, il s'agit de le remplir. Mon accompagnement aide les femmes qui réussissent à retrouver le pourquoi — et à construire une vie qui leur ressemble.",
+          cb: "Découvrez comment →",
+        },
+        spectatrice: {
+          e: "🪞",
+          n: "La Spectatrice",
+          tg: "Vous observez votre vie comme si elle appartenait à quelqu'un d'autre.",
+          sg: [
+            "Vous suivez les attentes des autres plutôt que vos propres désirs",
+            "Vous avez l'impression d'être « à côté » de votre vie, sans vraiment y participer",
+            "Vous dites oui par automatisme et non par choix",
+            "Vous avez perdu le contact avec ce que vous voulez, vous, vraiment",
+          ],
+          ins: "Ce n'est pas un défaut de caractère — c'est le résultat d'années à prioriser les besoins des autres avant les vôtres. Vous avez appris à vous effacer. Il est temps de réapprendre à occuper votre place — dans votre propre vie d'abord.",
+          st: [
+            {
+              t: "Reprenez votre voix",
+              c: "La prochaine fois qu'on vous demande ce que vous voulez : <strong>résistez à l'envie de dire « comme tu veux »</strong>. Même sur quelque chose de petit.",
+            },
+            {
+              t: "La question radicale",
+              c: "Demandez-vous : <strong>« Si personne ne me regardait, qu'est-ce que je ferais ? »</strong> La réponse vous appartient.",
+            },
+            {
+              t: "Une chose rien que pour vous",
+              c: "Cette semaine, faites <strong>une chose uniquement parce qu'elle vous fait du bien à vous</strong> — sans que ce soit utile à quelqu'un d'autre.",
+            },
+          ],
+          ct: "Prenez votre place — vraiment",
+          cp: "Vous méritez d'être la protagoniste de votre propre histoire. Mon accompagnement est fait pour vous aider à revenir à vous-même, pas à pas.",
+          cb: "Faites le premier pas →",
+        },
+        endormie: {
+          e: "🌑",
+          n: "L'Endormie",
+          tg: "Quelque chose s'est perdu en route. Et le fait que vous soyez là est déjà un acte de courage.",
+          sg: [
+            "Vous avez oublié ce qui vous fait vibrer — ou vous l'avez tellement enfoui que vous n'y croyez plus",
+            "La vie vous semble se dérouler en noir et blanc, sans relief",
+            "Vous avez l'impression d'avoir perdu le sens — de tout, peut-être",
+            "Vous fonctionnez. Mais vous ne savez plus vraiment pour quoi ni pour qui",
+          ],
+          ins: "Vous n'avez pas besoin de tout reconstruire. Vous avez besoin de retrouver le fil — ce fil intérieur qui relie à qui vous êtes vraiment. Il est encore là. Enfoui sous les années, les sacrifices, les déceptions. Le fait de faire ce test aujourd'hui n'est pas un hasard. C'est déjà le début.",
+          st: [
+            {
+              t: "Une seule question ce soir",
+              c: "Posez-vous : <strong>« Qu'est-ce qui me manque, profondément ? »</strong> Écrivez ce qui vient, sans le filtrer.",
+            },
+            {
+              t: "Une sensation, pas un objectif",
+              c: "Pensez à <strong>quelque chose que vous aimiez faire enfant</strong>. Pouvez-vous en retrouver une trace, même petite, aujourd'hui ?",
+            },
+            {
+              t: "Ne le faites pas seule",
+              c: "Ce chemin est plus facile accompagnée. <strong>Parlez à quelqu'un de confiance</strong>, ou prenez un premier appel avec moi — sans engagement.",
+            },
+          ],
+          ct: "Vous n'avez pas à faire ce chemin seule",
+          cp: "Ce que vous vivez est réel. Et il existe un chemin pour en sortir — pas en travaillant plus, mais en retrouvant ce qui a du sens pour vous. C'est ce qu'on construit ensemble.",
+          cb: "Un premier pas ensemble →",
+        },
+      };
+
+      const SL = [
+        "Énergie & quotidien",
+        "Désirs & identité",
+        "Réussite & sens",
+        "Présence & choix",
+      ];
+      let cur = 0,
+        ans = new Array(Q.length).fill(null),
+        ss = [0, 0, 0, 0];
+      function showScreen(id) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("screen-" + id).classList.add("active");
+      }
+      function startQuiz() {
+        document.getElementById("hero").style.display = "none";
+        document.getElementById("progressWrap").classList.add("visible");
+        showScreen("quiz");
+        renderQ();
+      }
+      function restart() {
+        cur = 0;
+        ans = new Array(Q.length).fill(null);
+        ss = [0, 0, 0, 0];
+        document.getElementById("hero").style.display = "block";
+        document.getElementById("progressWrap").classList.remove("visible");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        showScreen("start");
+      }
+      function renderQ() {
+        const q = Q[cur];
+        const pct = Math.round((cur / Q.length) * 100);
+        document.getElementById("progressLabel").textContent =
+          `Question ${cur + 1} / ${Q.length}`;
+        document.getElementById("progressPct").textContent = pct + "%";
+        document.getElementById("progressFill").style.width = pct + "%";
+        document.getElementById("qSphere").textContent = q.s;
+        document.getElementById("qNumber").textContent = `Question ${cur + 1}`;
+        document.getElementById("qText").textContent = q.t;
+        const w = document.getElementById("optionsWrap");
+        w.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((o, i) => {
+          const b = document.createElement("button");
+          b.className = "option" + (ans[cur] === i ? " selected" : "");
+          b.innerHTML = `<span class="opt-letter">${L[i]}</span><span>${o.l}</span>`;
+          b.addEventListener("click", () => {
+            ans[cur] = i;
+            document
+              .querySelectorAll(".option")
+              .forEach((e, x) => e.classList.toggle("selected", x === i));
+            document.getElementById("btnNext").disabled = false;
+          });
+          w.appendChild(b);
+        });
+        document.getElementById("btnPrev").style.visibility =
+          cur === 0 ? "hidden" : "visible";
+        document.getElementById("btnNext").disabled = ans[cur] === null;
+        document.getElementById("btnNext").textContent =
+          cur === Q.length - 1 ? "Voir mes résultats →" : "Suivant →";
+      }
+      function nextQ() {
+        if (ans[cur] === null) return;
+        if (cur < Q.length - 1) {
+          cur++;
+          renderQ();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          showScreen("email");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+      function prevQ() {
+        if (cur > 0) {
+          cur--;
+          renderQ();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function showResultOld() {
+        let total = 0;
+        ss = [0, 0, 0, 0];
+        ans.forEach((a, i) => {
+          const p = Q[i].o[a !== null ? a : 0].p;
+          total += p;
+          ss[Q[i].si] += p;
+        });
+        let pr;
+        if (total <= 20) pr = P.lucide;
+        else if (total <= 30) pr = P.survivante;
+        else if (total <= 39)
+          pr = ss[2] >= ss[3] ? P.performeuse : P.spectatrice;
+        else pr = P.endormie;
+        document.getElementById("rEmoji").textContent = pr.e;
+        document.getElementById("rName").textContent = pr.n;
+        document.getElementById("rTagline").textContent = pr.tg;
+        document.getElementById("rScore").textContent = total;
+        document.getElementById("rInsight").textContent = pr.ins;
+        document.getElementById("rCtaTitle").textContent = pr.ct;
+        document.getElementById("rCtaText").textContent = pr.cp;
+        document.getElementById("rCtaBtn").textContent = pr.cb;
+        const sl = document.getElementById("rSigns");
+        sl.innerHTML = "";
+        pr.sg.forEach((s) => {
+          const d = document.createElement("div");
+          d.className = "sign-item";
+          d.textContent = s;
+          sl.appendChild(d);
+        });
+        const sw = document.getElementById("rSteps");
+        sw.innerHTML = "";
+        pr.st.forEach((s, i) => {
+          sw.innerHTML += `<div class="step-item"><div class="step-num">${i + 1}</div><div class="step-text"><strong>${s.t}</strong><br>${s.c}</div></div>`;
+        });
+        const bd = document.getElementById("sphereBreakdown");
+        bd.innerHTML = "";
+        SL.forEach((l, i) => {
+          const p = Math.round((ss[i] / 12) * 100);
+          bd.innerHTML += `<div class="sphere-card"><div class="s-label">${l}</div><div class="s-bar-wrap"><div class="s-bar" style="width:${p}%"></div></div><div class="s-score">${ss[i]} / 12</div></div>`;
+        });
+        document.getElementById("progressFill").style.width = "100%";
+        document.getElementById("progressLabel").textContent =
+          "Analyse complète";
+        document.getElementById("progressPct").textContent = "100%";
+        showScreen("result");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function showResult() {
+        const prenom = document.getElementById("inputPrenom").value.trim();
+        const email = document.getElementById("inputEmail").value.trim();
+
+        let total = 0;
+        ss = [0, 0, 0, 0];
+        ans.forEach((a, i) => {
+          const p = Q[i].o[a !== null ? a : 0].p;
+          total += p;
+          ss[Q[i].si] += p;
+        });
+        let pr;
+        if (total <= 20) pr = P.lucide;
+        else if (total <= 30) pr = P.survivante;
+        else if (total <= 39)
+          pr = ss[2] >= ss[3] ? P.performeuse : P.spectatrice;
+        else pr = P.endormie;
+
+        // ── Envoi au webhook ──
+        const payload = {
+          prenom: prenom,
+          email: email,
+          score: total,
+          profil: pr.n,
+          spheres: {
+            energie: ss[0],
+            desirs: ss[1],
+            reussite: ss[2],
+            presence: ss[3],
+          },
+          reponses: ans.map((a, i) => ({
+            question: Q[i].t,
+            reponse: Q[i].o[a !== null ? a : 0].l,
+            points: Q[i].o[a !== null ? a : 0].p,
+          })),
+          date: new Date().toISOString(),
+        };
+
+        fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }).catch((err) => console.warn("Webhook error:", err));
+        // ── Fin envoi ──
+
+        document.getElementById("rEmoji").textContent = pr.e;
+        document.getElementById("rName").textContent = pr.n;
+        document.getElementById("rTagline").textContent = pr.tg;
+        document.getElementById("rScore").textContent = total;
+        document.getElementById("rInsight").textContent = pr.ins;
+        document.getElementById("rCtaTitle").textContent = pr.ct;
+        document.getElementById("rCtaText").textContent = pr.cp;
+        document.getElementById("rCtaBtn").textContent = pr.cb;
+        const sl = document.getElementById("rSigns");
+        sl.innerHTML = "";
+        pr.sg.forEach((s) => {
+          const d = document.createElement("div");
+          d.className = "sign-item";
+          d.textContent = s;
+          sl.appendChild(d);
+        });
+        const sw = document.getElementById("rSteps");
+        sw.innerHTML = "";
+        pr.st.forEach((s, i) => {
+          sw.innerHTML += `<div class="step-item"><div class="step-num">${i + 1}</div><div class="step-text"><strong>${s.t}</strong><br>${s.c}</div></div>`;
+        });
+        const bd = document.getElementById("sphereBreakdown");
+        bd.innerHTML = "";
+        SL.forEach((l, i) => {
+          const p = Math.round((ss[i] / 12) * 100);
+          bd.innerHTML += `<div class="sphere-card"><div class="s-label">${l}</div><div class="s-bar-wrap"><div class="s-bar" style="width:${p}%"></div></div><div class="s-score">${ss[i]} / 12</div></div>`;
+        });
+        document.getElementById("progressFill").style.width = "100%";
+        document.getElementById("progressLabel").textContent =
+          "Analyse complète";
+        document.getElementById("progressPct").textContent = "100%";
+        showScreen("result");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    </script>
+    <footer style="text-align:center;padding:40px 24px 24px;color:#999;font-size:0.85rem;background:#FAF8F5">
+      © 2026 Business Life Mentoring. Tous droits réservés.
+    </footer>
+</body>
+</html>
