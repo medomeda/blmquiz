@@ -662,6 +662,11 @@
               id="inputEmail"
               placeholder="Votre adresse email"
             />
+            <input
+              type="text"
+              id="inputTel"
+              placeholder="Votre numéro WhatsApp"
+            />
             <button
               class="btn btn-primary"
               onclick="showResult()"
@@ -1215,7 +1220,8 @@
       function showResult() {
         const prenom = document.getElementById("inputPrenom").value.trim();
         const email = document.getElementById("inputEmail").value.trim();
-
+        const telphonne = document.getElementById("inputTel").value.trim();
+        
         let total = 0;
         ss = [0, 0, 0, 0];
         ans.forEach((a, i) => {
@@ -1234,6 +1240,7 @@
         const payload = {
           prenom: prenom,
           email: email,
+          telephone: telephone,
           score: total,
           profil: pr.n,
           spheres: {
